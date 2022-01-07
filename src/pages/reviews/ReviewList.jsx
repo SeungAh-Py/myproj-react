@@ -1,5 +1,6 @@
 import Axios from 'axios';
 import DebugState from 'components/DebugStates';
+import Review from 'components/Review';
 import { useEffect, useState } from 'react';
 
 function PageReviewList() {
@@ -18,15 +19,10 @@ function PageReviewList() {
     // Promise 객체 ; 어떠한 함수도 Promise 객체로 만들수 있음.
     Axios.get(url)
       .then(({ data }) => {
-        console.group('정상 응답');
-        console.log(data);
-        console.groupEnd();
         setReviewList(data);
       }) // 정상일때 호출(200~300)
       .catch((error) => {
-        console.group('에러 응답');
         console.log(error);
-        console.groupEnd();
         setError(error);
       }) // 비정상일때 호출 (400~)
       .finally(() => {
@@ -46,6 +42,12 @@ function PageReviewList() {
       >
         새로고침
       </button>
+
+      <div className="">
+        {reviewList.map((review) => (
+          <Review review={review} />
+        ))}
+      </div>
 
       <hr />
       <DebugState loading={loading} error={error} reviewList={reviewList} />
