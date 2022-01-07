@@ -1,7 +1,8 @@
 function Rating({ score }) {
   return (
     <div>
-      <ul>
+      {/* ul태그에 flex : 정렬 */}
+      <ul className="flex">
         {[0, 1, 2, 3, 4].map((index) => {
           return (
             <li key={index}>
