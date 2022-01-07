@@ -3,12 +3,17 @@ import DebugState from 'components/DebugStates';
 import { useEffect, useState } from 'react';
 
 function PageReviewList() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [reviewList, setReviewList] = useState([]);
   useEffect(() => {
     refetch();
   }, []);
 
   const refetch = () => {
+    setLoading(true);
+    setError(null);
+
     const url = 'http://127.0.0.1:8000/shop/api/reviews/';
     // Promise 객체 ; 어떠한 함수도 Promise 객체로 만들수 있음.
     Axios.get(url)
@@ -22,13 +27,28 @@ function PageReviewList() {
         console.group('에러 응답');
         console.log(error);
         console.groupEnd();
-      }); // 비정상일때 호출 (400~)
+        setError(error);
+      }) // 비정상일때 호출 (400~)
+      .finally(() => {
+        setLoading(false);
+      });
   };
   return (
     <div>
       <h2>Review List</h2>
+
+      {loading && <div>Loading...</div>}
+      {error && <div>통신 중에 오류가 발생했습니다.</div>}
+
+      <button
+        onClick={() => refetch()}
+        className="bg-yellow-400 hover:bg-red-600"
+      >
+        새로고침
+      </button>
+
       <hr />
-      <DebugState reviewList={reviewList} />
+      <DebugState loading={loading} error={error} reviewList={reviewList} />
     </div>
   );
 }
