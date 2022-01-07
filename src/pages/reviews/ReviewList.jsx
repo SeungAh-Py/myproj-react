@@ -1,7 +1,9 @@
 import Axios from 'axios';
-import { useEffect } from 'react';
+import DebugState from 'components/DebugStates';
+import { useEffect, useState } from 'react';
 
-function ReviewList() {
+function PageReviewList() {
+  const [reviewList, setReviewList] = useState([]);
   useEffect(() => {
     refetch();
   }, []);
@@ -10,10 +12,11 @@ function ReviewList() {
     const url = 'http://127.0.0.1:8000/shop/api/reviews/';
     // Promise 객체 ; 어떠한 함수도 Promise 객체로 만들수 있음.
     Axios.get(url)
-      .then((response) => {
+      .then(({ data }) => {
         console.group('정상 응답');
-        console.log(response);
+        console.log(data);
         console.groupEnd();
+        setReviewList(data);
       }) // 정상일때 호출(200~300)
       .catch((error) => {
         console.group('에러 응답');
@@ -24,8 +27,10 @@ function ReviewList() {
   return (
     <div>
       <h2>Review List</h2>
+      <hr />
+      <DebugState reviewList={reviewList} />
     </div>
   );
 }
 
-export default ReviewList;
+export default PageReviewList;
