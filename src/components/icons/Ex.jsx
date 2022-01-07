@@ -1,11 +1,11 @@
 function Ex() {
   return (
     <svg
-      aria-hidden="true"
+      ariaHidden="true"
       focusable="false"
-      data-prefix="fas"
-      data-icon="times-circle"
-      class="w-4 h-4 mr-2 fill-current"
+      dataPrefix="fas"
+      dataIcon="times-circle"
+      className="w-4 h-4 mr-2 fill-current"
       role="img"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
