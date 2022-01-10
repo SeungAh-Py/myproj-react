@@ -56,7 +56,6 @@ function PageReviewList() {
       <h2>Review List</h2>
       {loading && <div>Loading ...</div>}
       {error && <div>통신 중에 오류가 발생했습니다.</div>}
-
       <button
         onClick={() => refetch()}
         className="bg-yellow-400 hover:bg-red-400 mr-1"
@@ -76,6 +75,7 @@ function PageReviewList() {
           <Review
             key={review.id}
             review={review}
+            handleEdit={() => navigate(`/reviews/${review.id}/edit/`)}
             handleDelete={() => deleteReview(review)}
           />
         ))}
