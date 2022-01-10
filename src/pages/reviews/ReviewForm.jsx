@@ -1,96 +1,81 @@
+import { useNavigate, useParams } from 'react-router-dom';
 import Axios from 'axios';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import DebugState from 'components/DebugStates';
+import DebugStates from 'components/DebugStates';
+import ReviewForm from 'components/ReviewForm';
+import useFieldValues from 'hooks/useFieldValues';
+import { useEffect, useState } from 'react/cjs/react.development';
 
-function ReviewForm() {
+function PageReviewForm() {
+  // 상탯값 정의. 훅 호출
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
   const { reviewId } = useParams();
-  const { Navigate } = useNavigate();
-  const [fieldValues, setFieldValues] = useState({
-    content: '',
-    score: 5,
-  });
+  const { fieldValues, handleFieldChange, clearFieldValues, setFieldValues } =
+    useFieldValues({
+      score: 5,
+      content: '',
+    });
 
+  useEffect(() => {
+    const fetchReview = async () => {
+      setLoading(true);
+      setError(null);
+
+      const url = `http://localhost:8000/shop/api/reviews/${reviewId}/`;
+      try {
+        const response = await Axios.get(url);
+        setFieldValues(response.data);
+      } catch (e) {
+        setError(e);
+      }
+      setLoading(false);
+    };
+    if (reviewId) fetchReview();
+    else clearFieldValues();
+  }, [reviewId]);
+
+  // 다양한 함수를 정의
   const saveReview = async () => {
-    const url = 'http://127.0.0.1:8000/shop/api/reviews/';
+    setLoading(true);
+    setError(null);
+
+    const url = !reviewId
+      ? 'http://localhost:8000/shop/api/reviews/'
+      : `http://localhost:8000/shop/api/reviews/${reviewId}`;
+
     try {
-      const response = await Axios.post(url, fieldValues);
-      console.group('saveRevie');
-      console.log(response.data);
-      console.group();
+      if (!reviewId) {
+        await Axios.post(url, fieldValues);
+      } else {
+        await Axios.put(url, fieldValues);
+      }
+      navigate('/reviews/');
     } catch (e) {
+      setError(e);
       console.error(e);
     }
+
+    setLoading(false);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFieldValues((prevFieldValues) => {
-      return {
-        ...prevFieldValues,
-        [name]: value,
-      };
-    });
-  };
-
+  // 표현 by jsx
   return (
     <div>
-      <h2>ReviewForm</h2>
-      <br />
-
-      <div>
-        <div>
-          <h2>
-            ReviewForm
-            {reviewId ? '수정' : '생성'}
-          </h2>
-          <DebugState reviewId={reviewId} />
-          <ReviewForm
-            fieldValues={fieldValues}
-            handleFieldChange={handleFieldChange}
-            handleSubmit={handleSubmit}
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            평점
-          </label>
-          <select
-            onChange={handleChange}
-            name="score"
-            value={fieldValues.score}
-          >
-            <option>0</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            리뷰
-          </label>
-          <textarea
-            type="text"
-            className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            onChange={handleChange}
-            name="content"
-            value={fieldValues.content}
-          />
-        </div>
-
-        <div className="mb-4">
-          <button className="shadow border bg-red-100 hover:bg-blue-300 border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight">
-            저장하기
-          </button>
-        </div>
-      </div>
+      <h2>
+        ReviewForm
+        {reviewId ? '수정' : '생성'}
+      </h2>
+      <ReviewForm
+        fieldValues={fieldValues}
+        handleFieldChange={handleFieldChange}
+        handleSubmit={saveReview}
+        loading={loading}
+      />
+      <DebugStates reviewId={reviewId} fieldValues={fieldValues} />
     </div>
   );
 }
-export default ReviewForm;
+
+export default PageReviewForm;
