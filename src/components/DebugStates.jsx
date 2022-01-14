@@ -1,4 +1,4 @@
-function DebugState(props) {
+function DebugStates(props) {
   return (
     <div>
       <pre className="text-xs bg-gray-100 p-1 border border-gray-400 overflow-x-scroll h-40">
@@ -8,4 +8,4 @@ function DebugState(props) {
   );
 }
 
-export default DebugState;
+export default DebugStates;

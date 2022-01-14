@@ -1,16 +1,18 @@
 // https://tailwind-elements.com/docs/standard/components/alerts/
-import Info from './icons/Info';
+
 import Check from './icons/Check';
 import Ex from './icons/Ex';
+import Info from './icons/Info';
 
 const MAPPING = {
   info: ['blue', <Info />],
   success: ['green', <Check />],
-  forbid: ['red', <Ex />],
+  danger: ['red', <Ex />],
 };
 
 function Alert({ type, message }) {
   // TODO: 매핑 오류에 대한 대응
+  // TODO: 동적 colorCode와 tailwind
   const [colorCode, icon] = MAPPING[type];
 
   return (
@@ -26,7 +28,7 @@ function Alert({ type, message }) {
 
 function Cheat() {
   return (
-    <div className="hidden bg-blue-100 text-blue-700 bg-green-100 text-green-700" />
+    <div className="bg-blue-100 text-blue-700 bg-green-100 text-green-700 bg-red-100 text-red-700" />
   );
 }
 

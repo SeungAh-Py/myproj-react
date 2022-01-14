@@ -8,8 +8,6 @@ function Rating({ score }) {
               {index < score ? <FilledStar /> : <EmptyStar />}
             </li>
           );
-          //   if (index < score) return <FilledStar />;
-          //   else return <EmptyStar />;
         })}
       </ul>
     </div>

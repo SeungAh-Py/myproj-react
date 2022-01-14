@@ -1,8 +1,8 @@
-import Axios from 'axios';
 import DebugStates from 'components/DebugStates';
 import Review from 'components/Review';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { axiosInstance } from 'api/base';
 
 function PageReviewList() {
   const [loading, setLoading] = useState(false);
@@ -13,12 +13,15 @@ function PageReviewList() {
   useEffect(() => {
     refetch();
   }, []);
+
   const refetch = () => {
     setLoading(true);
     setError(null);
-    const url = 'http://localhost:8000/shop/api/reviews/';
+
+    const url = `/shop/api/reviews/`;
     // Promise 객체
-    Axios.get(url)
+    axiosInstance
+      .get(url)
       .then(({ data }) => {
         setReviewList(data);
       })
@@ -30,12 +33,16 @@ function PageReviewList() {
         setLoading(false);
       });
   };
+
   const deleteReview = (deletingReview) => {
     const { id: deletingReviewId } = deletingReview;
-    const url = `http://localhost:8000/shop/api/reviews/${deletingReviewId}/`;
+    const url = `/shop/api/reviews/${deletingReviewId}/`;
+
     setLoading(true);
     setError(null);
-    Axios.delete(url)
+
+    axiosInstance
+      .delete(url)
       .then(() => {
         console.log('삭제 성공');
         // 선택지 #1) 삭제된 항목만 상탯값에서 제거
@@ -51,9 +58,11 @@ function PageReviewList() {
         setLoading(false);
       });
   };
+
   return (
     <div>
       <h2>Review List</h2>
+
       {loading && <div>Loading ...</div>}
       {error && <div>통신 중에 오류가 발생했습니다.</div>}
 
@@ -76,13 +85,16 @@ function PageReviewList() {
           <Review
             key={review.id}
             review={review}
+            handleEdit={() => navigate(`/reviews/${review.id}/edit/`)}
             handleDelete={() => deleteReview(review)}
           />
         ))}
       </div>
+
       <hr />
       <DebugStates loading={loading} error={error} reviewList={reviewList} />
     </div>
   );
 }
+
 export default PageReviewList;

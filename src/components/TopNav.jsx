@@ -1,35 +1,38 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 function TopNav() {
   return (
     <div className="my-3">
-      <ul className="flex gap-4">
-        <li>
+      <div className="flex place-content-between gap-4">
+        <NavLink to="/" className="px-4 py-3 font-semibold">
+          이진석 블로그
+        </NavLink>
+        <div className="flex">
+          <MyLink to="/blog/">블로그</MyLink>
+          <MyLink to="/news/">뉴스룸</MyLink>
           <MyLink to="/accounts/login/">로그인</MyLink>
-        </li>
-        <li>
           <MyLink to="/accounts/profile/">프로필</MyLink>
-        </li>
-        <li>
-          <MyLink to="/reviews/">리뷰</MyLink>
-        </li>
-        <li>
-          <MyLink to="/examples/components/">컴포넌트 예시</MyLink>
-        </li>
-      </ul>
+          <MyLink to="/ititems/">IT ITEMS</MyLink>
+        </div>
+      </div>
     </div>
   );
 }
 
 function MyLink({ to, children }) {
   return (
-    <Link
+    <NavLink
       to={to}
-      className="pb-1 text-gray-500 hover:text-red-500 hover:border-red-500 border-b-4"
+      className={({ isActive }) =>
+        baseClassName + ' ' + (isActive ? 'border-b-4 border-red-400' : '')
+      }
     >
       {children}
-    </Link>
+    </NavLink>
   );
 }
+
+const baseClassName =
+  'px-4 pt-3 pb-2 font-semibold hover:bg-red-200 hover:text-red-500 hover:text-white';
 
 export default TopNav;
