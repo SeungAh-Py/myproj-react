@@ -4,7 +4,6 @@ import { useApiAxios } from 'api/base';
 import useAuth from 'hooks/useAuth';
 import useFieldValues from 'hooks/useFieldValues';
 import { useNavigate } from 'react-router-dom';
-import useLocalStorage from 'hooks/userLocalStorage';
 
 const INITIAL_FIELD_VALUES = { username: '', password: '' };
 
@@ -30,8 +29,9 @@ function LoginForm() {
     requestToken({ data: fieldValues }).then((response) => {
       const { access, refresh, username, first_name, last_name } =
         response.data;
-      // TODO: access/refresh token을 브라우저 어딘가에 저장해야 합니다.
-      // 저장해서 페이지 새로고침이 발생하더라도 그 token이 유실되지 않아야 합니다.
+      // TODO: access/refresh token을 브라우저 어딘가에 저장해야 한다.
+      // 저장해서 페이지 새로고침이 발생하더라도 그 token이 유실되지 않아야 한다.
+
       login({
         access,
         refresh,
@@ -76,7 +76,7 @@ function LoginForm() {
             name="password"
             value={fieldValues.password}
             onChange={handleFieldChange}
-            placeholder="passowrd"
+            placeholder="password"
             className="p-3 bg-gray-100 focus:outline-none focus:border focus:border-gray-400 w-full"
           />
         </div>
