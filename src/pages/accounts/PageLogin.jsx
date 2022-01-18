@@ -1,13 +1,11 @@
-import H2 from 'components/H2';
 import LoginForm from 'components/accounts/LoginForm';
 
-function Login() {
+function PageLogin() {
   return (
     <div>
-      <H2>로그인</H2>
       <LoginForm />
     </div>
   );
 }
 
-export default Login;
+export default PageLogin;

@@ -1,61 +1,89 @@
-import Input from 'components/forms/Input';
-import SubmitButton from 'components/forms/SubmitButton';
+import Button from 'components/Button';
+import DebugStates from 'components/DebugStates';
+import { useApiAxios } from 'api/base';
+import useAuth from 'hooks/useAuth';
 import useFieldValues from 'hooks/useFieldValues';
-import useFormRequest from 'hooks/useFormRequest';
+import { useNavigate } from 'react-router-dom';
+import useLocalStorage from 'hooks/userLocalStorage';
 
 const INITIAL_FIELD_VALUES = { username: '', password: '' };
 
 function LoginForm() {
-  // /accounts/api/token/ 주소에 jwt token 발급 API가 구현되어있습니다. (using djangorestframework-simplejwt)
-  const { saveLoading, saveError, saveErrorMessages, saveRequest } =
-    useFormRequest('/accounts/api/token/');
+  const navigate = useNavigate();
 
-  const { fieldValues, handleFieldChange, formData } =
+  const [auth, _, login] = useAuth();
+
+  const [{ loading, error }, requestToken] = useApiAxios(
+    {
+      url: '/accounts/api/token/',
+      method: 'POST',
+    },
+    { manual: true },
+  );
+
+  const { fieldValues, handleFieldChange } =
     useFieldValues(INITIAL_FIELD_VALUES);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    saveRequest({
-      data: formData,
-    }).then((response) => {
-      const { access, refresh } = response.data;
-      console.log(access);
-      console.log(refresh);
+    requestToken({ data: fieldValues }).then((response) => {
+      const { access, refresh, username, first_name, last_name } =
+        response.data;
+      // TODO: access/refresh token을 브라우저 어딘가에 저장해야 합니다.
+      // 저장해서 페이지 새로고침이 발생하더라도 그 token이 유실되지 않아야 합니다.
+      login({
+        access,
+        refresh,
+        username,
+        first_name,
+        last_name,
+      });
+
+      console.log('access :', access);
+      console.log('refresh :', refresh);
+      console.log('username :', username);
+      console.log('first_name :', first_name);
+      console.log('last_name :', last_name);
+
+      // 인증 후, 이동할 주소를 지정합니다.
+      navigate('/');
     });
   };
 
   return (
     <div>
-      {saveError && saveError.response?.status !== 400 && (
-        <div className="text-red-400">{`저장 중 에러가 발생했습니다. (${saveError.response?.status} ${saveError.response?.statusText})`}</div>
+      <h2>Login</h2>
+
+      {error?.response?.status === 401 && (
+        <div className="text-red-400">로그인에 실패했습니다.</div>
       )}
 
       <form onSubmit={handleSubmit}>
         <div className="my-3">
-          <Input
+          <input
             type="text"
             name="username"
             value={fieldValues.username}
-            placeholder="아이디를 입력해주세요."
             onChange={handleFieldChange}
-            errorMessages={saveErrorMessages.username}
+            placeholder="username"
+            className="p-3 bg-gray-100 focus:outline-none focus:border focus:border-gray-400 w-full"
           />
         </div>
         <div className="my-3">
-          <Input
+          <input
             type="password"
             name="password"
             value={fieldValues.password}
-            placeholder="암호를 입력해주세요."
             onChange={handleFieldChange}
-            errorMessages={saveErrorMessages.password}
+            placeholder="passowrd"
+            className="p-3 bg-gray-100 focus:outline-none focus:border focus:border-gray-400 w-full"
           />
         </div>
-        <div className="my-3">
-          <SubmitButton saveLoading={saveLoading} />
-        </div>
+        <Button>로그인</Button>
       </form>
+
+      <DebugStates auth={auth} fieldValues={fieldValues} />
     </div>
   );
 }

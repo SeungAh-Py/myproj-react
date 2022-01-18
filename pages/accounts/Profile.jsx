@@ -1,4 +1,4 @@
-function PageProfile() {
+function Profile() {
   return (
     <div>
       <h2>Profile</h2>
@@ -6,4 +6,4 @@ function PageProfile() {
   );
 }
 
-export default PageProfile;
+export default Profile;
